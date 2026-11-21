@@ -20,7 +20,7 @@ from competitive_sudoku.sudoku import GameState, SudokuBoard, Move, TabooMove, p
     SudokuSettings, print_game_state, pretty_print_game_state, allowed_squares
 from competitive_sudoku.sudokuai import SudokuAI
 
-SUDOKU_SOLVER = 'bin\\solve_sudoku.exe' if platform.system() == 'Windows' else 'bin/solve_sudoku'
+SUDOKU_SOLVER = 'bin\\solve_sudokuwin.exe' if platform.system() == 'Windows' else 'bin/solve_sudoku'
 #SUDOKU_SOLVER = 'bin\\Windows\\solve_sudoku.exe' if platform.system() == 'Windows' else 'bin/solve_sudoku'
 
 GameResult = Tuple[float, float]
