@@ -2,7 +2,6 @@
 #  Software License, (See accompanying file LICENSE or copy at
 #  https://www.gnu.org/licenses/gpl-3.0.txt)
 
-import copy
 import random
 import time
 from typing import List
@@ -87,13 +86,14 @@ class SudokuAI(competitive_sudoku.sudokuai.SudokuAI):
         """
         Applies a move to the game state and returns the new game state.
         """
-        new_board = copy.deepcopy(game_state.board)
+        m = game_state.board.m
+        n = game_state.board.n
+        new_board = SudokuBoard(m, n)
+        new_board.squares = game_state.board.squares[:]
         new_board.put(move.square, move.value)
 
         i, j = move.square
         N = new_board.N
-        m = new_board.m
-        n = new_board.n
 
         completed_units = 0
 
