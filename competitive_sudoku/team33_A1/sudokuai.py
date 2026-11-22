@@ -4,6 +4,7 @@
 
 import random
 import time
+import math
 from typing import List
 from competitive_sudoku.sudoku import GameState, Move, SudokuBoard
 import competitive_sudoku.sudokuai
@@ -25,10 +26,63 @@ class SudokuAI(competitive_sudoku.sudokuai.SudokuAI):
         # First move to ensure that we don't run out of time before the first move is made.
         self.propose_move(legal_moves[0])
 
-        # I guess that this needs to be changed with our algorithm, but for now, we just propose random legal moves.
+       
+
+        # function to implement minimax alogrithm with alpha beta pruning
+        def minimax(game_state, depth, alpha , beta, maximizing, player1):
+            moves = self.get_legal_moves(game_state)
+            # return current points to compare to later
+            if depth == 0 or len(moves) == 0:
+                # claude told me to use this construction but just using 0,1 worked okay too i think
+                # the scores are given back a list [score player1, score player2]
+                player2 = 1 - player1
+                return game_state.scores[player1] - game_state.scores[player2], None
+
+            
+            best_move = None
+
+            if maximizing:
+                best_score = -math.inf
+                for move in moves:
+                    child = self.apply_move(game_state, move)
+
+                    # calling minimax again to to evaluate the child, this time minimizing
+                    score, _ = minimax(child, depth - 1, alpha, beta, False, player1)
+                    if score > best_score:
+                        best_score, best_move = score, move
+                    alpha = max(alpha, best_score)
+                    if alpha >= beta:
+                        break # we prune here
+                return best_score, best_move
+            else:
+                best_score = math.inf
+                for move in moves:
+                    child = self.apply_move(game_state, move)
+
+                    # calling minimax again to to evaluate the child, this time maximizing
+                    score, _ = minimax(child, depth - 1, alpha, beta, True, player1)
+                    if score < best_score:
+                        best_score, best_move = score, move
+                    beta = min(beta, best_score)
+                    if alpha >= beta:
+                        break # pruning again
+                return best_score, best_move
+
+        # calling minimax, starting as the maximizing player (since its our move)
+        def choose_move(game_state, depth=9):
+            player1 = 0
+            _, move = minimax(game_state, depth, -math.inf, math.inf, True, player1)
+            return move
+
+
+
+        # 
         while True:
-            time.sleep(0.2)
-            self.propose_move(random.choice(legal_moves))
+            # time.sleep(0.2)
+            # self.propose_move(random.choice(legal_moves))
+            self.propose_move(choose_move(game_state))
+
+
 
     def get_legal_moves(self, game_state: GameState) -> list[Move]:
         """
